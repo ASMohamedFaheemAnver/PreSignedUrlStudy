@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Credentials, S3 } from 'aws-sdk';
+import { v4 as uuidv4 } from 'uuid';
 import awsConfig from './config';
 import { FileUploadDTO } from './dto/file-upload-dto';
 
@@ -13,6 +14,7 @@ export class AppService {
     });
     this.s3 = new S3({
       credentials: this.access,
+      region: awsConfig.region,
     });
   }
 
@@ -20,9 +22,9 @@ export class AppService {
     const res = await this.s3.createPresignedPost({
       Bucket: awsConfig.Bucket,
       Fields: {
-        Key: `${fileUploadDTO.filePath}`,
+        Key: uuidv4(),
       },
-      // Expires: 100,
+      Expires: 3600,
     });
     return res;
   }
