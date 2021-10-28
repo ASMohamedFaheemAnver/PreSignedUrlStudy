@@ -24,8 +24,18 @@ export class AppService {
       Fields: {
         Key: uuidv4(),
       },
+      Conditions: [
+        ['starts-with', '$Content-Type', 'image/'],
+        ['content-length-range', 0, 1000000],
+      ],
       Expires: 3600,
     });
-    return res;
+
+    const s3Res = this.s3.getSignedUrl('getObject', {
+      Bucket: awsConfig.Bucket,
+      Key: res.fields.Key,
+    });
+
+    return { ...res, uploadedFileUrl: s3Res };
   }
 }
