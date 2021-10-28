@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Credentials, S3 } from 'aws-sdk';
 import awsConfig from './config';
+import { FileUploadDTO } from './dto/file-upload-dto';
 
 @Injectable()
 export class AppService {
@@ -10,15 +11,19 @@ export class AppService {
     this.access = new Credentials({
       ...awsConfig,
     });
-    this.s3 = new S3({});
+    this.s3 = new S3({
+      credentials: this.access,
+    });
   }
 
-  createPresignedUrl(): string {
-    this.s3.getSignedUrl('putObject', {
-      Bucket: 's3udevstudy',
-      Key: '',
-      Expires: 100,
+  async createPresignedUrl(fileUploadDTO: FileUploadDTO): Promise<any> {
+    const res = await this.s3.createPresignedPost({
+      Bucket: awsConfig.Bucket,
+      Fields: {
+        Key: `${fileUploadDTO.filePath}`,
+      },
+      // Expires: 100,
     });
-    return 'Ok!';
+    return res;
   }
 }

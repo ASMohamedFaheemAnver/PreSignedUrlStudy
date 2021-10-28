@@ -1,4 +1,5 @@
 export = {
   accessKeyId: '',
   secretAccessKey: '',
+  Bucket: '',
 };
