@@ -22,7 +22,7 @@ export class AppService {
     const res = await this.s3.createPresignedPost({
       Bucket: awsConfig.Bucket,
       Fields: {
-        Key: uuidv4(),
+        Key: `path/${uuidv4()}`,
       },
       Conditions: [
         ['starts-with', '$Content-Type', 'image/'],
