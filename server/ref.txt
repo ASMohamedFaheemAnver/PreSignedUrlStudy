@@ -1,0 +1,40 @@
+# Create a s3 bucket
+# Visit iAm
+# Create policy with aws actions : "s3:PutObject", "s3:GetObject", "s3:DeleteObject" and bucket name with any object in the bucket
+# Create a user with any name and access key with programmatic access and select created s3 policy
+# If it doesn't give access key you need to create one in the tab
+
+# If you get error while uploading the files
+# Example error Access to XMLHttpRequest at 'https://s3.ap-southeast-1.amazonaws.com/s3udevstudybucket' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+The error message you provided suggests that you are encountering a Cross-Origin Resource Sharing (CORS) issue while trying to upload a file to an S3 bucket using a presigned URL.
+
+CORS is a security feature implemented by web browsers that restricts web pages from making requests to a different domain than the one that served the page. This means that if your web application running on http://localhost:3000 is trying to make a request to https://s3.ap-southeast-1.amazonaws.com/s3udevstudybucket (which is a different domain), the browser will block the request by default.
+
+To resolve this issue, you need to configure CORS on your S3 bucket to allow cross-origin requests from your web application's domain. Here are the steps you can follow:
+
+Log in to the AWS Management Console and navigate to the S3 service.
+Select the S3 bucket that you are trying to upload files to.
+Click on the "Permissions" tab and then select "CORS configuration".
+Add the following CORS rules:
+
+[
+    {
+        "AllowedHeaders": [
+            "*"
+        ],
+        "AllowedMethods": [
+            "PUT",
+            "POST",
+            "GET"
+        ],
+        "AllowedOrigins": [
+            "http://localhost:3000"
+        ],
+        "ExposeHeaders": []
+    }
+]
+
+This configuration allows GET, PUT, and POST requests from http://localhost:3000 and allows any headers to be sent with the request.
+Save the CORS configuration.
+Once the CORS configuration is in place, try uploading a file again using the presigned URL, and the error should be resolved.
