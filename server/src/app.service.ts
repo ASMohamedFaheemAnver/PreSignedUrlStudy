@@ -19,13 +19,15 @@ export class AppService {
   }
 
   async createPresignedUrl(fileUploadDTO: FileUploadDTO): Promise<any> {
-    const res = await this.s3.createPresignedPost({
+    const res = this.s3.createPresignedPost({
       Bucket: awsConfig.Bucket,
       Fields: {
         Key: `path/${uuidv4()}`,
       },
       Conditions: [
+        // To allow base64 upload
         ['starts-with', '$Content-Type', 'image/'],
+        ['starts-with', '$Content-Encoding', 'base64'],
         ['content-length-range', 0, 1000000],
       ],
       Expires: 3600,
@@ -35,7 +37,6 @@ export class AppService {
       Bucket: awsConfig.Bucket,
       Key: res.fields.Key,
     });
-
     return { ...res, uploadedFileUrl: s3Res };
   }
 }
