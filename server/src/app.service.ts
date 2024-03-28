@@ -19,15 +19,18 @@ export class AppService {
   }
 
   async createPresignedUrl(fileUploadDTO: FileUploadDTO): Promise<any> {
+    const type = 'png'; // .jpg, .mp4, etc ; To make aws recognize type well
+    // Content type in the header is required too
     const res = this.s3.createPresignedPost({
       Bucket: awsConfig.Bucket,
       Fields: {
-        Key: `path/${uuidv4()}`,
+        Key: `path/${uuidv4()}.${type}`,
       },
       Conditions: [
+        // Also check Content-MD5, Which verify the hash
         // To allow base64 upload
         ['starts-with', '$Content-Type', 'image/'],
-        ['starts-with', '$Content-Encoding', 'base64'],
+        // ['starts-with', '$Content-Encoding', 'base64'],
         ['content-length-range', 0, 1000000],
       ],
       Expires: 3600,
